@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="dark">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>لوحة إدارة شلتنا | Shilletna Roastery Admin</title>
+
+    <!-- خطوط عربية وإنجليزية متناسقة مع هوية المحمصة -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['IBM Plex Sans Arabic', 'Inter', 'sans-serif'],
+                        display: ['Cairo', 'Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        bg: 'var(--bg-primary)',
+                        card: 'var(--bg-card)',
+                        cardHover: 'var(--bg-card-hover)',
+                        elevated: 'var(--bg-elevated)',
+                        ink: 'var(--text-primary)',
+                        muted: 'var(--text-secondary)',
+                        subtle: 'var(--text-muted)',
+                        line: 'var(--border-color)',
+                        copper: {
+                            DEFAULT: 'var(--accent-copper)',
+                            hover: 'var(--accent-copper-hover)',
+                            soft: 'var(--accent-copper-soft)',
+                            ink: 'var(--accent-ink)',
+                        }
+                    }
+                }
+            }
+        };
+    </script>
+
+    <style>
+        /* لوحة الألوان النهارية الدافئة (Warm Paper / Alabaster & Roasted Copper) */
+        :root {
+            --bg-primary: #f7f4ef;
+            --bg-card: #ffffff;
+            --bg-card-hover: #fcfaf7;
+            --bg-elevated: #efeae2;
+            --text-primary: #1c1815;
+            --text-secondary: #635b54;
+            --text-muted: #8c8279;
+            --border-color: #e2dbd3;
+            --accent-copper: #c87d4b;
+            --accent-copper-hover: #b46c3c;
+            --accent-copper-soft: rgba(200, 125, 75, 0.14);
+            --accent-ink: #ffffff;
+        }
+
+        /* لوحة الألوان الليلية الفخمة (Deep Charcoal / Espresso & Warm Amber/Copper) */
+        html.dark {
+            --bg-primary: #11100f;
+            --bg-card: #1a1816;
+            --bg-card-hover: #201d1b;
+            --bg-elevated: #24211e;
+            --text-primary: #f3efe9;
+            --text-secondary: #a59b91;
+            --text-muted: #786f66;
+            --border-color: #2c2824;
+            --accent-copper: #d98a54;
+            --accent-copper-hover: #e39864;
+            --accent-copper-soft: rgba(217, 138, 84, 0.16);
+            --accent-ink: #11100f;
+        }
+
+        body, header, main, section, div, button, input, textarea, select {
+            transition: background-color 0.22s ease, border-color 0.22s ease, color 0.2s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-copper);
+        }
+    </style>
+</head>
+<body class="bg-bg text-ink font-sans antialiased selection:bg-copper selection:text-copper-ink min-h-screen pb-16">
+
+    <!-- الشريط العلوي -->
+    <header class="sticky top-0 z-30 bg-bg/95 backdrop-blur-md border-b border-line">
+        <div class="max-w-6xl mx-auto px-4 py-3.5 flex flex-wrap items-center justify-between gap-3">
+            <!-- هوية لوحة الإدارة -->
+            <div class="flex items-center gap-3 min-w-0">
+                <div class="w-10 h-10 rounded-xl bg-card border border-line text-copper flex items-center justify-center shrink-0">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                    </svg>
+                </div>
+                <div class="min-w-0">
+                    <h1 id="uiBrandTitle" class="text-base sm:text-lg font-display font-extrabold text-ink truncate">لوحة إدارة شلتنا</h1>
+                    <p id="uiBrandSubtitle" class="text-[11px] sm:text-xs text-muted truncate">شلتنا • ل.س</p>
+                </div>
+            </div>
+
+            <!-- أزرار التحكم: العودة للمينيو + تبديل اللغة + تبديل الثيم -->
+            <div class="flex items-center gap-2 shrink-0">
+                <a href="index.html" id="backToMenuLink" class="h-9 sm:h-10 px-3 rounded-xl bg-card hover:bg-elevated text-ink border border-line text-xs font-bold transition flex items-center gap-1.5">
+                    <svg class="w-4 h-4 text-copper" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                    </svg>
+                    <span id="uiBackToMenu">العودة إلى المينيو</span>
+                </a>
+
+                <button type="button" onclick="toggleLanguage()" id="langToggleBtn" class="h-9 sm:h-10 px-3 rounded-xl bg-card hover:bg-elevated text-ink border border-line text-xs font-extrabold transition active:scale-95">
+                    EN
+                </button>
+
+                <button type="button" onclick="toggleTheme()" id="themeToggleBtn" class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-card hover:bg-elevated text-ink border border-line transition active:scale-95 flex items-center justify-center" aria-label="Toggle Theme">
+                    <svg id="sunIcon" class="w-4 h-4 sm:w-5 sm:h-5 text-copper" fill="none" stroke="currentColor" stroke-width="1.9" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                    <svg id="moonIcon" class="hidden w-4 h-4 sm:w-5 sm:h-5 text-ink" fill="none" stroke="currentColor" stroke-width="1.9" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 pt-6 space-y-6">
+        <!-- شاشة تسجيل الدخول بالإيميل وكلمة السر -->
+        <div id="adminLoginCard" class="max-w-md mx-auto bg-card rounded-2xl border border-line p-6 space-y-5 shadow-lg animate-fade-in">
+            <div class="space-y-1.5 text-start">
+                <span id="uiLoginBadge" class="inline-block text-[11px] font-bold text-copper bg-copper-soft px-2.5 py-0.5 rounded-md">لوحة الإدارة</span>
+                <h2 id="uiLoginTitle" class="text-xl font-display font-extrabold text-ink">تسجيل الدخول</h2>
+            </div>
+
+            <form id="adminLoginForm" onsubmit="handleAdminLogin(event)" class="space-y-4 text-start">
+                <div>
+                    <label for="adminEmailInput" id="uiEmailLabel" class="block text-xs font-bold text-ink mb-1.5">البريد الإلكتروني</label>
+                    <input type="email" id="adminEmailInput" required placeholder="admin@example.com" dir="ltr" class="w-full bg-bg border border-line focus:border-copper rounded-xl px-3.5 py-2.5 text-sm text-ink placeholder-subtle focus:outline-none" />
+                </div>
+                <div>
+                    <label for="adminPasswordInput" id="uiPasswordLabel" class="block text-xs font-bold text-ink mb-1.5">كلمة المرور</label>
+                    <input type="password" id="adminPasswordInput" required placeholder="••••••••" dir="ltr" class="w-full bg-bg border border-line focus:border-copper rounded-xl px-3.5 py-2.5 text-sm text-ink placeholder-subtle focus:outline-none" />
+                </div>
+
+                <div id="adminAuthError" class="hidden text-xs font-bold text-red-400 bg-red-500/10 border border-red-500/30 rounded-xl p-3"></div>
+
+                <button type="submit" id="adminLoginSubmitBtn" class="w-full bg-copper hover:bg-copper-hover text-copper-ink font-extrabold py-3 px-4 rounded-xl text-sm transition active:scale-[0.99]">
+                    دخول
+                </button>
+            </form>
+        </div>
+
+        <!-- مساحة عمل الإدارة بعد تسجيل الدخول -->
+        <div id="adminWorkspace" class="hidden space-y-6 animate-fade-in">
+            <!-- شريط التنقل بين أقسام الإدارة وحالة المستخدم -->
+            <div class="bg-card rounded-2xl border border-line p-4 flex flex-wrap items-center justify-between gap-3">
+                <div class="flex flex-wrap items-center gap-2" id="adminSectionTabs">
+                    <button type="button" data-admin-tab="add-product" onclick="switchAdminTab('add-product')" id="tabBtnAddProduct" class="admin-tab-btn px-3.5 py-2 rounded-xl text-xs font-bold bg-copper text-copper-ink transition">
+                        إضافة منتج
+                    </button>
+                    <button type="button" data-admin-tab="edit-product" onclick="switchAdminTab('edit-product')" id="tabBtnEditProduct" class="admin-tab-btn px-3.5 py-2 rounded-xl text-xs font-bold bg-bg text-muted hover:text-ink border border-line transition">
+                        تعديل منتج
+                    </button>
+                    <button type="button" data-admin-tab="add-category" onclick="switchAdminTab('add-category')" id="tabBtnAddCategory" class="admin-tab-btn px-3.5 py-2 rounded-xl text-xs font-bold bg-bg text-muted hover:text-ink border border-line transition">
+                        إضافة قسم جديد
+                    </button>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <span id="adminSessionBadge" class="text-xs text-muted font-medium truncate max-w-[180px] sm:max-w-[240px]" dir="ltr"></span>
+                    <button type="button" onclick="handleAdminLogout()" id="uiLogoutBtn" class="px-3 py-1.5 rounded-xl bg-bg hover:bg-red-500/10 text-muted hover:text-red-400 border border-line hover:border-red-500/30 text-xs font-bold transition">
+                        تسجيل الخروج
+                    </button>
+                </div>
+            </div>
+
+            <!-- 1. قسم إضافة منتج: صورة من الاستوديو فقط + الاسم والوصف بالعربية فقط + السعر والقسم -->
+            <section id="adminTab-add-product" class="admin-tab-panel bg-card rounded-2xl border border-line p-5 sm:p-6 space-y-5 text-start">
+                <div class="border-b border-line pb-3">
+                    <h2 id="uiAddProdHeading" class="text-lg font-display font-extrabold text-ink">إضافة منتج</h2>
+                </div>
+
+                <form id="addProductForm" onsubmit="handleCreateProduct(event)" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <!-- اختيار صورة مباشرة من الاستوديو -->
+                    <div class="lg:col-span-5 space-y-2">
+                        <label id="uiAddImgLabel" class="block text-xs font-bold text-ink">صورة المنتج من الاستوديو <span class="text-copper">*</span></label>
+                        <div onclick="document.getElementById('addProductFileInput').click()" class="group relative h-56 sm:h-64 rounded-2xl bg-bg border-2 border-dashed border-line hover:border-copper cursor-pointer overflow-hidden flex flex-col items-center justify-center p-4 text-center transition">
+                            <img id="addProductPreviewImg" src="" alt="" class="hidden w-full h-full object-cover rounded-xl" />
+                            <div id="addProductPlaceholder" class="space-y-2">
+                                <div class="w-12 h-12 rounded-xl bg-card border border-line text-copper flex items-center justify-center mx-auto group-hover:scale-105 transition">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                </div>
+                                <p id="uiPickGalleryText" class="text-xs font-bold text-ink">اختر صورة من الاستوديو</p>
+                            </div>
+                        </div>
+                        <p id="addProductImageMeta" class="text-[11px] text-muted"></p>
+                        <input type="file" id="addProductFileInput" accept="image/*" class="hidden" onchange="handleGalleryImageSelect(event, 'add')" />
+                    </div>
+
+                    <!-- الاسم والوصف بالعربية فقط -->
+                    <div class="lg:col-span-7 space-y-4">
+                        <div>
+                            <label for="addProdNameAr" id="uiAddNameLabel" class="block text-xs font-bold text-ink mb-1.5">اسم المنتج (بالعربية) <span class="text-copper">*</span></label>
+                            <input type="text" id="addProdNameAr" required placeholder="مثال: لاتيه الكراميل المحمص" class="w-full bg-bg border border-line focus:border-copper rounded-xl px-3.5 py-2.5 text-sm text-ink placeholder-subtle focus:outline-none" />
+                        </div>
+
+                        <div>
+                            <label for="addProdDescAr" id="uiAddDescLabel" class="block text-xs font-bold text-ink mb-1.5">وصف المنتج (بالعربية) <span class="text-copper">*</span></label>
+                            <textarea id="addProdDescAr" rows="3" required placeholder="اكتب وصف المنتج باللغة العربية..." class="w-full bg-bg border border-line focus:border-copper rounded-xl px-3.5 py-2.5 text-sm text-ink placeholder-subtle focus:outline-none"></textarea>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label for="addProdPrice" id="uiAddPriceLabel" class="block text-xs font-bold text-ink mb-1.5">السعر (ل.س) <span class="text-copper">*</span></label>
+                                <input type="number" id="addProdPrice" required min="100" step="100" placeholder="35000" dir="ltr" class="w-full bg-bg border border-line focus:border-copper rounded-xl px-3.5 py-2.5 text-sm text-ink placeholder-subtle focus:outline-none" />
+                            </div>
+
+                            <div>
+                                <label for="addProdCategory" id="uiAddCatLabel" class="block text-xs font-bold text-ink mb-1.5">القسم <span class="text-copper">*</span></label>
+                                <select id="addProdCategory" required class="w-full bg-bg border border-line focus:border-copper rounded-xl px-3.5 py-2.5 text-sm text-ink focus:outline-none">
+                                    <!-- يتم تعبئتها ديناميكياً -->
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-wrap items-center gap-5 pt-1">
+                            <label class="inline-flex items-center gap-2 text-xs font-bold text-ink cursor-pointer">
+                                <input type="checkbox" id="addProdAvailable" checked class="w-4 h-4 accent-[#d98a54] rounded" />
+                                <span id="uiAddAvailLabel">متوفر</span>
+                            </label>
+                            <label class="inline-flex items-center gap-2 text-xs font-bold text-ink cursor-pointer">
+                                <input type="checkbox" id="addProdHasMilk" checked class="w-4 h-4 accent-[#d98a54] rounded" />
+                                <span id="uiAddMilkLabel">خيارات الحليب والتحلية</span>
+                            </label>
+                        </div>
+
+                        <div class="pt-2">
+                            <button type="submit" id="addProductSubmitBtn" class="w-full sm:w-auto px-6 py-3 bg-copper hover:bg-copper-hover text-copper-ink font-extrabold rounded-xl text-sm transition active:scale-[0.99]">
+                                حفظ المنتج
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </section>
+
+            <!-- 2. قسم تعديل منتج: تعديل كامل للمنتج المختار أو حذفه -->
+            <section id="adminTab-edit-product" class="admin-tab-panel hidden space-y-5 text-start">
+                <div class="bg-card rounded-2xl border border-line p-5 sm:p-6 space-y-5">
+                    <div class="border-b border-line pb-3 flex items-center justify-between gap-2">
+                        <h2 id="uiEditProdHeading" class="text-lg font-display font-extrabold text-ink">تعديل منتج</h2>
+                        <span id="adminProductsCountLabel" class="text-xs font-bold text-copper bg-copper-soft px-3 py-1 rounded-lg">0</span>
+                    </div>
+
+                    <!-- نموذج التعديل الكامل للمنتج -->
+                    <div id="editProductEditorBox" class="hidden bg-bg rounded-2xl border border-copper/40 p-4 sm:p-5 space-y-4">
+                        <div class="flex items-center justify-between border-b border-line pb-2.5">
+                            <h3 id="uiEditFormTitle" class="text-sm font-extrabold text-copper">تعديل بيانات المنتج</h3>
+                            <button type="button" onclick="cancelEditProduct()" id="uiCancelEditBtn" class="text-xs font-bold text-muted hover:text-ink">إلغاء</button>
+                        </div>
+
+                        <form id="editProductForm" onsubmit="handleUpdateProduct(event)" class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+                            <input type="hidden" id="editProdId" />
+
+                            <div class="lg:col-span-5 space-y-2">
+                                <label id="uiEditImgLabel" class="block text-xs font-bold text-ink">صورة المنتج (من الاستوديو)</label>
+                                <div onclick="document.getElementById('editProductFileInput').click()" class="group relative h-52 rounded-2xl bg-card border-2 border-dashed border-line hover:border-copper cursor-pointer overflow-hidden flex items-center justify-center transition">
+                                    <img id="editProductPreviewImg" src="" alt="" class="w-full h-full object-cover" />
+                                    <div id="uiChangeImgOverlay" class="absolute inset-x-2 bottom-2 bg-black/75 text-white text-[11px] font-bold py-1.5 px-3 rounded-lg text-center">
+                                        تغيير الصورة من الاستوديو
+                                    </div>
+                                </div>
+                                <p id="editProductImageMeta" class="text-[11px] text-muted"></p>
+                                <input type="file" id="editProductFileInput" accept="image/*" class="hidden" onchange="handleGalleryImageSelect(event, 'edit')" />
+                            </div>
+
+                            <div class="lg:col-span-7 space-y-3.5">
+                                <div>
+                                    <label for="editProdNameAr" id="uiEditNameArLabel" class="block text-xs font-bold text-ink mb-1">اسم المنتج (عربي) <span class="text-copper">*</span></label>
+                                    <input type="text" id="editProdNameAr" required class="w-full bg-card border border-line focus:border-copper rounded-xl px-3.5 py-2 text-sm text-ink focus:outline-none" />
+                                </div>
+
+                                <div>
+                                    <label for="editProdNameEn" id="uiEditNameEnLabel" class="block text-xs font-bold text-ink mb-1">اسم المنتج (إنجليزي)</label>
+                                    <input type="text" id="editProdNameEn" dir="ltr" class="w-full bg-card border border-line focus:border-copper rounded-xl px-3.5 py-2 text-sm text-ink focus:outline-none" />
+                                </div>
+
+                                <div>
+                                    <label for="editProdDescAr" id="uiEditDescArLabel" class="block text-xs font-bold text-ink mb-1">وصف المنتج (عربي) <span class="text-copper">*</span></label>
+                                    <textarea id="editProdDescAr" rows="2" required class="w-full bg-card border border-line focus:border-copper rounded-xl px-3.5 py-2 text-sm text-ink focus:outline-none"></textarea>
+                                </div>
+
+                                <div>
+                                    <label for="editProdDescEn" id="uiEditDescEnLabel" class="block text-xs font-bold text-ink mb-1">وصف المنتج (إنجليزي)</label>
+                                    <textarea id="editProdDescEn" rows="2" dir="ltr" class="w-full bg-card border border-line focus:border-copper rounded-xl px-3.5 py-2 text-sm text-ink focus:outline-none"></textarea>
+                                </div>
+
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                                    <div>
+                                        <label for="editProdPrice" id="uiEditPriceLabel" class="block text-xs font-bold text-ink mb-1">السعر (ل.س) <span class="text-copper">*</span></label>
+                                        <input type="number" id="editProdPrice" required min="100" step="100" dir="ltr" class="w-full bg-card border border-line focus:border-copper rounded-xl px-3.5 py-2 text-sm text-ink focus:outline-none" />
+                                    </div>
+                                    <div>
+                                        <label for="editProdCategory" id="uiEditCatLabel" class="block text-xs font-bold text-ink mb-1">القسم <span class="text-copper">*</span></label>
+                                        <select id="editProdCategory" required class="w-full bg-card border border-line focus:border-copper rounded-xl px-3.5 py-2 text-sm text-ink focus:outline-none">
+                                            <!-- يتم تعبئتها ديناميكياً -->
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="flex flex-wrap items-center gap-5 pt-1">
+                                    <label class="inline-flex items-center gap-2 text-xs font-bold text-ink cursor-pointer">
+                                        <input type="checkbox" id="editProdAvailable" class="w-4 h-4 accent-[#d98a54]" />
+                                        <span id="uiEditAvailLabel">متوفر</span>
+                                    </label>
+                                    <label class="inline-flex items-center gap-2 text-xs font-bold text-ink cursor-pointer">
+                                        <input type="checkbox" id="editProdHasMilk" class="w-4 h-4 accent-[#d98a54]" />
+                                        <span id="uiEditMilkLabel">خيارات الحليب والتحلية</span>
+                                    </label>
+                                </div>
+
+                                <div class="flex flex-wrap items-center gap-2.5 pt-2">
+                                    <button type="submit" id="editProductSaveBtn" class="px-5 py-2.5 bg-copper hover:bg-copper-hover text-copper-ink font-extrabold rounded-xl text-xs sm:text-sm transition">
+                                        حفظ التعديلات
+                                    </button>
+                                    <button type="button" onclick="handleDeleteProduct()" id="deleteProductBtn" class="px-4 py-2.5 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 font-bold rounded-xl text-xs sm:text-sm transition">
+                                        حذف المنتج
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- قائمة المنتجات لاختيار أي منتج وتعديله -->
+                    <div id="adminProductsList" class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                        <!-- يتم توليد بطاقات المنتجات ديناميكياً -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. قسم إضافة قسم جديد -->
+            <section id="adminTab-add-category" class="admin-tab-panel hidden bg-card rounded-2xl border border-line p-5 sm:p-6 space-y-6 text-start">
+                <div class="border-b border-line pb-3">
+                    <h2 id="uiAddCatHeading" class="text-lg font-display font-extrabold text-ink">إضافة قسم جديد</h2>
+                </div>
+
+                <form id="addCategoryForm" onsubmit="handleCreateCategory(event)" class="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
+                    <div>
+                        <label for="newCatNameAr" id="uiNewCatArLabel" class="block text-xs font-bold text-ink mb-1.5">اسم القسم بالعربية <span class="text-copper">*</span></label>
+                        <input type="text" id="newCatNameAr" required placeholder="مثال: مشروبات شتوية" class="w-full bg-bg border border-line focus:border-copper rounded-xl px-3.5 py-2.5 text-sm text-ink placeholder-subtle focus:outline-none" />
+                    </div>
+
+                    <div>
+                        <label for="newCatNameEn" id="uiNewCatEnLabel" class="block text-xs font-bold text-ink mb-1.5">اسم القسم بالإنجليزية</label>
+                        <input type="text" id="newCatNameEn" placeholder="Winter Specials" dir="ltr" class="w-full bg-bg border border-line focus:border-copper rounded-xl px-3.5 py-2.5 text-sm text-ink placeholder-subtle focus:outline-none" />
+                    </div>
+
+                    <button type="submit" id="addCategorySubmitBtn" class="w-full py-2.5 px-4 bg-copper hover:bg-copper-hover text-copper-ink font-extrabold rounded-xl text-sm transition active:scale-[0.99]">
+                        إضافة القسم
+                    </button>
+                </form>
+
+                <!-- الأقسام الحالية -->
+                <div class="space-y-3 pt-2 border-t border-line">
+                    <h3 id="uiExistingCatsLabel" class="text-xs font-bold text-muted">الأقسام الحالية</h3>
+                    <div id="adminCategoriesList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                        <!-- يتم توليد الأقسام هنا -->
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- إشعار Toast منبثق -->
+    <div id="toast" class="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-card text-ink border border-copper px-4 py-2.5 rounded-xl shadow-2xl text-xs sm:text-sm font-bold flex items-center gap-2.5 opacity-0 pointer-events-none transition-all duration-300 -translate-y-3">
+        <span class="w-2 h-2 rounded-full bg-copper"></span>
+        <span id="toastMessage">تم الحفظ</span>
+    </div>
+
+    <script type="module">
+        import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+        import {
+            getAuth,
+            onAuthStateChanged,
+            signInWithEmailAndPassword,
+            signOut
+        } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+        import {
+            getFirestore,
+            collection,
+            doc,
+            setDoc,
+            updateDoc,
+            deleteDoc,
+            onSnapshot
+        } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+        // إعدادات مشروع Firebase الخاصة بكافيه شلتنا
+        const firebaseConfig = {
+            apiKey: "AIzaSyDluTAlF2MA_vsCL_DmTKdZxDQk_05V4dM",
+            authDomain: "samir4-abd21.firebaseapp.com",
+            projectId: "samir4-abd21",
+            storageBucket: "samir4-abd21.firebasestorage.app",
+            messagingSenderId: "149418652500",
+            appId: "1:149418652500:web:593406e522f03af10b0ec1"
+        };
+
+        const CATEGORIES_COLLECTION = 'cafe_categories';
+        const PRODUCTS_COLLECTION = 'cafe_products';
+
+        const UI_TEXT = {
+            ar: {
+                pageTitle: 'لوحة إدارة شلتنا | Shilletna Roastery Admin',
+                brandTitle: 'لوحة إدارة شلتنا',
+                brandSubtitle: 'شلتنا • ل.س',
+                backToMenu: 'العودة إلى المينيو',
+                langBtn: 'EN',
+                loginBadge: 'لوحة الإدارة',
+                loginTitle: 'تسجيل الدخول',
+                emailLabel: 'البريد الإلكتروني',
+                passwordLabel: 'كلمة المرور',
+                loginBtn: 'دخول',
+                tabAddProduct: 'إضافة منتج',
+                tabEditProduct: 'تعديل منتج',
+                tabAddCategory: 'إضافة قسم جديد',
+                logoutBtn: 'تسجيل الخروج',
+                addProdHeading: 'إضافة منتج',
+                addImgLabel: 'صورة المنتج من الاستوديو',
+                pickGalleryText: 'اختر صورة من الاستوديو',
+                addNameLabel: 'اسم المنتج (بالعربية)',
+                addNamePlaceholder: 'مثال: لاتيه الكراميل المحمص',
+                addDescLabel: 'وصف المنتج (بالعربية)',
+                addDescPlaceholder: 'اكتب وصف المنتج باللغة العربية...',
+                addPriceLabel: 'السعر (ل.س)',
+                addCatLabel: 'القسم',
+                addAvailLabel: 'متوفر',
+                addMilkLabel: 'خيارات الحليب والتحلية',
+                addSubmitBtn: 'حفظ المنتج',
+                editProdHeading: 'تعديل منتج',
+                editFormTitle: 'تعديل بيانات المنتج',
+                cancelBtn: 'إلغاء',
+                editImgLabel: 'صورة المنتج (من الاستوديو)',
+                changeImgOverlay: 'تغيير الصورة من الاستوديو',
+                editNameArLabel: 'اسم المنتج (عربي)',
+                editNameEnLabel: 'اسم المنتج (إنجليزي)',
+                editDescArLabel: 'وصف المنتج (عربي)',
+                editDescEnLabel: 'وصف المنتج (إنجليزي)',
+                editPriceLabel: 'السعر (ل.س)',
+                editCatLabel: 'القسم',
+                editAvailLabel: 'متوفر',
+                editMilkLabel: 'خيارات الحليب والتحلية',
+                saveChangesBtn: 'حفظ التعديلات',
+                deleteProdBtn: 'حذف المنتج',
+                editBtn: 'تعديل',
+                availableBadge: 'متوفر',
+                unavailableBadge: 'غير متوفر',
+                addCatHeading: 'إضافة قسم جديد',
+                newCatArLabel: 'اسم القسم بالعربية',
+                newCatArPlaceholder: 'مثال: مشروبات شتوية',
+                newCatEnLabel: 'اسم القسم بالإنجليزية',
+                addCatBtn: 'إضافة القسم',
+                existingCatsLabel: 'الأقسام الحالية',
+                deleteCatBtn: 'حذف',
+                selectImageFirst: 'يرجى اختيار صورة للمنتج من الاستوديو أولاً.',
+                imgTooLarge: 'حجم الصورة كبير جداً بعد الضغط، اختر صورة أصغر.',
+                productAdded: 'تم إضافة المنتج بنجاح',
+                productUpdated: 'تم حفظ تعديلات المنتج',
+                productDeleted: 'تم حذف المنتج',
+                categoryAdded: 'تم إضافة القسم بنجاح',
+                categoryDeleted: 'تم حذف القسم',
+                confirmDeleteProduct: 'هل أنت متأكد من حذف هذا المنتج؟',
+                confirmDeleteCategory: 'هل أنت متأكد من حذف هذا القسم؟',
+                loginFailed: 'تعذر تسجيل الدخول، تأكد من البريد الإلكتروني وكلمة المرور.',
+                currency: 'ل.س'
+            },
+            en: {
+                pageTitle: 'Shilletna Roastery Admin Dashboard',
+                brandTitle: 'SHILLETNA ADMIN DASHBOARD',
+                brandSubtitle: 'Shilletna Roastery • SYP',
+                backToMenu: 'Back to Menu',
+                langBtn: 'عربي',
+                loginBadge: 'ADMIN PORTAL',
+                loginTitle: 'Sign In',
+                emailLabel: 'Email',
+                passwordLabel: 'Password',
+                loginBtn: 'Sign In',
+                tabAddProduct: 'Add Product',
+                tabEditProduct: 'Edit Product',
+                tabAddCategory: 'Add Category',
+                logoutBtn: 'Sign Out',
+                addProdHeading: 'Add Product',
+                addImgLabel: 'Product Image from Gallery',
+                pickGalleryText: 'Choose image from gallery',
+                addNameLabel: 'Product Name (Arabic)',
+                addNamePlaceholder: 'e.g., لاتيه الكراميل المحمص',
+                addDescLabel: 'Product Description (Arabic)',
+                addDescPlaceholder: 'Write product description in Arabic...',
+                addPriceLabel: 'Price (SYP)',
+                addCatLabel: 'Category',
+                addAvailLabel: 'Available',
+                addMilkLabel: 'Milk & Sweetness Options',
+                addSubmitBtn: 'Save Product',
+                editProdHeading: 'Edit Product',
+                editFormTitle: 'Edit Product Details',
+                cancelBtn: 'Cancel',
+                editImgLabel: 'Product Image (Gallery)',
+                changeImgOverlay: 'Change image from gallery',
+                editNameArLabel: 'Product Name (Arabic)',
+                editNameEnLabel: 'Product Name (English)',
+                editDescArLabel: 'Product Description (Arabic)',
+                editDescEnLabel: 'Product Description (English)',
+                editPriceLabel: 'Price (SYP)',
+                editCatLabel: 'Category',
+                editAvailLabel: 'Available',
+                editMilkLabel: 'Milk & Sweetness Options',
+                saveChangesBtn: 'Save Changes',
+                deleteProdBtn: 'Delete Product',
+                editBtn: 'Edit',
+                availableBadge: 'Available',
+                unavailableBadge: 'Unavailable',
+                addCatHeading: 'Add New Category',
+                newCatArLabel: 'Category Name (Arabic)',
+                newCatArPlaceholder: 'e.g., مشروبات شتوية',
+                newCatEnLabel: 'Category Name (English)',
+                addCatBtn: 'Add Category',
+                existingCatsLabel: 'Current Categories',
+                deleteCatBtn: 'Delete',
+                selectImageFirst: 'Please choose an image from your gallery first.',
+                imgTooLarge: 'Compressed image is too large, please select a smaller image.',
+                productAdded: 'Product added successfully',
+                productUpdated: 'Product changes saved',
+                productDeleted: 'Product deleted',
+                categoryAdded: 'Category added successfully',
+                categoryDeleted: 'Category deleted',
+                confirmDeleteProduct: 'Are you sure you want to delete this product?',
+                confirmDeleteCategory: 'Are you sure you want to delete this category?',
+                loginFailed: 'Sign in failed. Check your email and password.',
+                currency: 'SYP'
+            }
+        };
+
+        let state = {
+            lang: localStorage.getItem('sakina_lang') || 'ar',
+            theme: localStorage.getItem('sakina_theme') || 'dark',
+            activeTab: 'add-product',
+            categories: [],
+            products: [],
+            addImageDataUrl: '',
+            editImageDataUrl: '',
+            currentUser: null
+        };
+
+        const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        function formatSyp(amount) {
+            return `${Number(amount || 0).toLocaleString('en-US')} ${UI_TEXT[state.lang].currency}`;
+        }
+
+        function applyTheme() {
+            const isDark = state.theme === 'dark';
+            document.documentElement.classList.toggle('dark', isDark);
+            document.getElementById('sunIcon').classList.toggle('hidden', !isDark);
+            document.getElementById('moonIcon').classList.toggle('hidden', isDark);
+        }
+
+        function toggleTheme() {
+            state.theme = state.theme === 'dark' ? 'light' : 'dark';
+            localStorage.setItem('sakina_theme', state.theme);
+            applyTheme();
+        }
+        window.toggleTheme = toggleTheme;
+
+        function applyLanguage() {
+            const lang = state.lang;
+            const t = UI_TEXT[lang];
+            const htmlEl = document.documentElement;
+            htmlEl.lang = lang;
+            htmlEl.dir = lang === 'ar' ? 'rtl' : 'ltr';
+            document.title = t.pageTitle;
+
+            document.getElementById('uiBrandTitle').textContent = t.brandTitle;
+            document.getElementById('uiBrandSubtitle').textContent = t.brandSubtitle;
+            document.getElementById('uiBackToMenu').textContent = t.backToMenu;
+            document.getElementById('langToggleBtn').textContent = t.langBtn;
+
+            const backLink = document.getElementById('backToMenuLink');
+            const backSvg = backLink.querySelector('svg');
+            backSvg.innerHTML = lang === 'ar'
+                ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />'
+                : '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />';
+
+            document.getElementById('uiLoginBadge').textContent = t.loginBadge;
+            document.getElementById('uiLoginTitle').textContent = t.loginTitle;
+            document.getElementById('uiEmailLabel').textContent = t.emailLabel;
+            document.getElementById('uiPasswordLabel').textContent = t.passwordLabel;
+            document.getElementById('adminLoginSubmitBtn').textContent = t.loginBtn;
+
+            document.getElementById('tabBtnAddProduct').textContent = t.tabAddProduct;
+            document.getElementById('tabBtnEditProduct').textContent = t.tabEditProduct;
+            document.getElementById('tabBtnAddCategory').textContent = t.tabAddCategory;
+            document.getElementById('uiLogoutBtn').textContent = t.logoutBtn;
+
+            document.getElementById('uiAddProdHeading').textContent = t.addProdHeading;
+            document.getElementById('uiAddImgLabel').innerHTML = `${t.addImgLabel} <span class="text-copper">*</span>`;
+            document.getElementById('uiPickGalleryText').textContent = t.pickGalleryText;
+            document.getElementById('uiAddNameLabel').innerHTML = `${t.addNameLabel} <span class="text-copper">*</span>`;
+            document.getElementById('addProdNameAr').placeholder = t.addNamePlaceholder;
+            document.getElementById('uiAddDescLabel').innerHTML = `${t.addDescLabel} <span class="text-copper">*</span>`;
+            document.getElementById('addProdDescAr').placeholder = t.addDescPlaceholder;
+            document.getElementById('uiAddPriceLabel').innerHTML = `${t.addPriceLabel} <span class="text-copper">*</span>`;
+            document.getElementById('uiAddCatLabel').innerHTML = `${t.addCatLabel} <span class="text-copper">*</span>`;
+            document.getElementById('uiAddAvailLabel').textContent = t.addAvailLabel;
+            document.getElementById('uiAddMilkLabel').textContent = t.addMilkLabel;
+            document.getElementById('addProductSubmitBtn').textContent = t.addSubmitBtn;
+
+            document.getElementById('uiEditProdHeading').textContent = t.editProdHeading;
+            document.getElementById('uiEditFormTitle').textContent = t.editFormTitle;
+            document.getElementById('uiCancelEditBtn').textContent = t.cancelBtn;
+            document.getElementById('uiEditImgLabel').textContent = t.editImgLabel;
+            document.getElementById('uiChangeImgOverlay').textContent = t.changeImgOverlay;
+            document.getElementById('uiEditNameArLabel').innerHTML = `${t.editNameArLabel} <span class="text-copper">*</span>`;
+            document.getElementById('uiEditNameEnLabel').textContent = t.editNameEnLabel;
+            document.getElementById('uiEditDescArLabel').innerHTML = `${t.editDescArLabel} <span class="text-copper">*</span>`;
+            document.getElementById('uiEditDescEnLabel').textContent = t.editDescEnLabel;
+            document.getElementById('uiEditPriceLabel').innerHTML = `${t.editPriceLabel} <span class="text-copper">*</span>`;
+            document.getElementById('uiEditCatLabel').innerHTML = `${t.editCatLabel} <span class="text-copper">*</span>`;
+            document.getElementById('uiEditAvailLabel').textContent = t.editAvailLabel;
+            document.getElementById('uiEditMilkLabel').textContent = t.editMilkLabel;
+            document.getElementById('editProductSaveBtn').textContent = t.saveChangesBtn;
+            document.getElementById('deleteProductBtn').textContent = t.deleteProdBtn;
+
+            document.getElementById('uiAddCatHeading').textContent = t.addCatHeading;
+            document.getElementById('uiNewCatArLabel').innerHTML = `${t.newCatArLabel} <span class="text-copper">*</span>`;
+            document.getElementById('newCatNameAr').placeholder = t.newCatArPlaceholder;
+            document.getElementById('uiNewCatEnLabel').textContent = t.newCatEnLabel;
+            document.getElementById('addCategorySubmitBtn').textContent = t.addCatBtn;
+            document.getElementById('uiExistingCatsLabel').textContent = t.existingCatsLabel;
+
+            renderCategorySelects();
+            renderAdminCategoriesList();
+            renderAdminProductsList();
+        }
+
+        function toggleLanguage() {
+            state.lang = state.lang === 'ar' ? 'en' : 'ar';
+            localStorage.setItem('sakina_lang', state.lang);
+            applyLanguage();
+        }
+        window.toggleLanguage = toggleLanguage;
+
+        onAuthStateChanged(auth, (user) => {
+            state.currentUser = user;
+            const loginCard = document.getElementById('adminLoginCard');
+            const workspace = document.getElementById('adminWorkspace');
+
+            if (user) {
+                loginCard.classList.add('hidden');
+                workspace.classList.remove('hidden');
+                document.getElementById('adminSessionBadge').textContent = user.email || '';
+                startFirestoreSync();
+            } else {
+                workspace.classList.add('hidden');
+                loginCard.classList.remove('hidden');
+            }
+        });
+
+        async function handleAdminLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('adminEmailInput').value.trim();
+            const password = document.getElementById('adminPasswordInput').value;
+            const errEl = document.getElementById('adminAuthError');
+            const btn = document.getElementById('adminLoginSubmitBtn');
+
+            errEl.classList.add('hidden');
+            btn.disabled = true;
+
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+            } catch (err) {
+                errEl.textContent = UI_TEXT[state.lang].loginFailed;
+                errEl.classList.remove('hidden');
+            } finally {
+                btn.disabled = false;
+            }
+        }
+        window.handleAdminLogin = handleAdminLogin;
+
+        async function handleAdminLogout() {
+            await signOut(auth);
+        }
+        window.handleAdminLogout = handleAdminLogout;
+
+        function startFirestoreSync() {
+            onSnapshot(collection(db, CATEGORIES_COLLECTION), (snap) => {
+                state.categories = snap.docs
+                    .map(d => ({ id: d.id, ...d.data() }))
+                    .sort((a, b) => (a.order ?? 99) - (b.order ?? 99));
+                renderCategorySelects();
+                renderAdminCategoriesList();
+                renderAdminProductsList();
+            });
+
+            onSnapshot(collection(db, PRODUCTS_COLLECTION), (snap) => {
+                state.products = snap.docs
+                    .map(d => ({ id: d.id, ...d.data() }))
+                    .sort((a, b) => (a.order ?? 99) - (b.order ?? 99));
+                renderAdminProductsList();
+            });
+        }
+
+        function switchAdminTab(tabName) {
+            state.activeTab = tabName;
+            document.querySelectorAll('.admin-tab-btn').forEach(btn => {
+                const active = btn.dataset.adminTab === tabName;
+                btn.className = `admin-tab-btn px-3.5 py-2 rounded-xl text-xs font-bold transition ${
+                    active ? 'bg-copper text-copper-ink' : 'bg-bg text-muted hover:text-ink border border-line'
+                }`;
+            });
+
+            document.querySelectorAll('.admin-tab-panel').forEach(panel => {
+                panel.classList.toggle('hidden', panel.id !== `adminTab-${tabName}`);
+            });
+        }
+        window.switchAdminTab = switchAdminTab;
+
+        function compressGalleryImage(file, maxWidth = 720, quality = 0.76) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const scale = Math.min(1, maxWidth / img.width);
+                        const canvas = document.createElement('canvas');
+                        canvas.width = Math.round(img.width * scale);
+                        canvas.height = Math.round(img.height * scale);
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        resolve(canvas.toDataURL('image/jpeg', quality));
+                    };
+                    img.onerror = reject;
+                    img.src = ev.target.result;
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
+        async function handleGalleryImageSelect(e, mode) {
+            const file = e.target.files && e.target.files[0];
+            if (!file) return;
+
+            try {
+                const compressed = await compressGalleryImage(file);
+                if (compressed.length > 900000) {
+                    showToast(UI_TEXT[state.lang].imgTooLarge);
+                    return;
+                }
+
+                if (mode === 'add') {
+                    state.addImageDataUrl = compressed;
+                    const imgEl = document.getElementById('addProductPreviewImg');
+                    imgEl.src = compressed;
+                    imgEl.classList.remove('hidden');
+                    document.getElementById('addProductPlaceholder').classList.add('hidden');
+                    document.getElementById('addProductImageMeta').textContent = file.name;
+                } else {
+                    state.editImageDataUrl = compressed;
+                    document.getElementById('editProductPreviewImg').src = compressed;
+                    document.getElementById('editProductImageMeta').textContent = file.name;
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+        window.handleGalleryImageSelect = handleGalleryImageSelect;
+
+        function renderCategorySelects() {
+            const addSelect = document.getElementById('addProdCategory');
+            const editSelect = document.getElementById('editProdCategory');
+            const currentEditVal = editSelect.value;
+
+            const optionsHtml = state.categories.map(cat => {
+                const label = state.lang === 'en' && cat.nameEn ? cat.nameEn : cat.nameAr;
+                return `<option value="${cat.id}">${label}</option>`;
+            }).join('');
+
+            addSelect.innerHTML = optionsHtml;
+            editSelect.innerHTML = optionsHtml;
+            if (currentEditVal) {
+                editSelect.value = currentEditVal;
+            }
+        }
+
+        async function handleCreateProduct(e) {
+            e.preventDefault();
+            const t = UI_TEXT[state.lang];
+
+            if (!state.addImageDataUrl) {
+                showToast(t.selectImageFirst);
+                return;
+            }
+
+            const nameAr = document.getElementById('addProdNameAr').value.trim();
+            const descAr = document.getElementById('addProdDescAr').value.trim();
+            const price = Number(document.getElementById('addProdPrice').value);
+            const category = document.getElementById('addProdCategory').value;
+            const available = document.getElementById('addProdAvailable').checked;
+            const hasMilk = document.getElementById('addProdHasMilk').checked;
+
+            const id = `prod-${Date.now()}`;
+            await setDoc(doc(db, PRODUCTS_COLLECTION, id), {
+                id,
+                nameAr,
+                nameEn: nameAr,
+                descAr,
+                descEn: descAr,
+                price,
+                category,
+                image: state.addImageDataUrl,
+                available,
+                hasMilk,
+                order: state.products.length + 1
+            });
+
+            document.getElementById('addProductForm').reset();
+            state.addImageDataUrl = '';
+            document.getElementById('addProductPreviewImg').classList.add('hidden');
+            document.getElementById('addProductPlaceholder').classList.remove('hidden');
+            document.getElementById('addProductImageMeta').textContent = '';
+
+            showToast(t.productAdded);
+        }
+        window.handleCreateProduct = handleCreateProduct;
+
+        function renderAdminProductsList() {
+            const t = UI_TEXT[state.lang];
+            document.getElementById('adminProductsCountLabel').textContent = `${state.products.length}`;
+            const listEl = document.getElementById('adminProductsList');
+
+            listEl.innerHTML = state.products.map(item => {
+                const catObj = state.categories.find(c => c.id === item.category);
+                const catName = catObj ? (state.lang === 'en' && catObj.nameEn ? catObj.nameEn : catObj.nameAr) : '';
+                const title = state.lang === 'en' && item.nameEn ? item.nameEn : item.nameAr;
+                const isAvail = item.available !== false;
+
+                return `
+                    <div class="bg-bg rounded-xl border border-line p-3.5 flex items-center justify-between gap-3 text-start">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <img src="${item.image}" alt="${title}" class="w-14 h-14 rounded-xl object-cover bg-card border border-line shrink-0" />
+                            <div class="min-w-0">
+                                <div class="flex items-center gap-2">
+                                    <h4 class="font-bold text-ink text-xs sm:text-sm truncate">${title}</h4>
+                                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-md ${isAvail ? 'bg-emerald-500/15 text-emerald-400' : 'bg-red-500/15 text-red-400'}">
+                                        ${isAvail ? t.availableBadge : t.unavailableBadge}
+                                    </span>
+                                </div>
+                                <p class="text-[11px] text-muted truncate mt-0.5">${catName} • <span class="text-copper font-bold">${formatSyp(item.price)}</span></p>
+                            </div>
+                        </div>
+                        <button type="button" onclick="startEditProduct('${item.id}')" class="px-3 py-1.5 rounded-xl bg-card hover:bg-copper text-ink hover:text-copper-ink border border-line hover:border-copper text-xs font-bold transition shrink-0">
+                            ${t.editBtn}
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function startEditProduct(productId) {
+            const item = state.products.find(p => p.id === productId);
+            if (!item) return;
+
+            state.editImageDataUrl = item.image || '';
+            document.getElementById('editProdId').value = item.id;
+            document.getElementById('editProdNameAr').value = item.nameAr || '';
+            document.getElementById('editProdNameEn').value = item.nameEn || '';
+            document.getElementById('editProdDescAr').value = item.descAr || '';
+            document.getElementById('editProdDescEn').value = item.descEn || '';
+            document.getElementById('editProdPrice').value = item.price || 0;
+            document.getElementById('editProdCategory').value = item.category || (state.categories[0]?.id || '');
+            document.getElementById('editProdAvailable').checked = item.available !== false;
+            document.getElementById('editProdHasMilk').checked = Boolean(item.hasMilk);
+            document.getElementById('editProductPreviewImg').src = item.image || '';
+            document.getElementById('editProductImageMeta').textContent = '';
+
+            document.getElementById('editProductEditorBox').classList.remove('hidden');
+            document.getElementById('editProductEditorBox').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+        window.startEditProduct = startEditProduct;
+
+        function cancelEditProduct() {
+            document.getElementById('editProductEditorBox').classList.add('hidden');
+            state.editImageDataUrl = '';
+        }
+        window.cancelEditProduct = cancelEditProduct;
+
+        async function handleUpdateProduct(e) {
+            e.preventDefault();
+            const id = document.getElementById('editProdId').value;
+            if (!id) return;
+
+            const nameAr = document.getElementById('editProdNameAr').value.trim();
+            const nameEn = document.getElementById('editProdNameEn').value.trim() || nameAr;
+            const descAr = document.getElementById('editProdDescAr').value.trim();
+            const descEn = document.getElementById('editProdDescEn').value.trim() || descAr;
+            const price = Number(document.getElementById('editProdPrice').value);
+            const category = document.getElementById('editProdCategory').value;
+            const available = document.getElementById('editProdAvailable').checked;
+            const hasMilk = document.getElementById('editProdHasMilk').checked;
+
+            const payload = {
+                nameAr,
+                nameEn,
+                descAr,
+                descEn,
+                price,
+                category,
+                available,
+                hasMilk
+            };
+            if (state.editImageDataUrl) {
+                payload.image = state.editImageDataUrl;
+            }
+
+            await updateDoc(doc(db, PRODUCTS_COLLECTION, id), payload);
+            cancelEditProduct();
+            showToast(UI_TEXT[state.lang].productUpdated);
+        }
+        window.handleUpdateProduct = handleUpdateProduct;
+
+        async function handleDeleteProduct() {
+            const id = document.getElementById('editProdId').value;
+            if (!id) return;
+            if (!confirm(UI_TEXT[state.lang].confirmDeleteProduct)) return;
+
+            await deleteDoc(doc(db, PRODUCTS_COLLECTION, id));
+            cancelEditProduct();
+            showToast(UI_TEXT[state.lang].productDeleted);
+        }
+        window.handleDeleteProduct = handleDeleteProduct;
+
+        async function handleCreateCategory(e) {
+            e.preventDefault();
+            const nameAr = document.getElementById('newCatNameAr').value.trim();
+            const nameEn = document.getElementById('newCatNameEn').value.trim() || nameAr;
+            if (!nameAr) return;
+
+            const id = `cat-${Date.now()}`;
+            await setDoc(doc(db, CATEGORIES_COLLECTION, id), {
+                id,
+                nameAr,
+                nameEn,
+                order: state.categories.length + 1
+            });
+
+            document.getElementById('addCategoryForm').reset();
+            showToast(UI_TEXT[state.lang].categoryAdded);
+        }
+        window.handleCreateCategory = handleCreateCategory;
+
+        function renderAdminCategoriesList() {
+            const t = UI_TEXT[state.lang];
+            const listEl = document.getElementById('adminCategoriesList');
+
+            listEl.innerHTML = state.categories.map(cat => {
+                const label = state.lang === 'en' && cat.nameEn ? cat.nameEn : cat.nameAr;
+                return `
+                    <div class="bg-bg rounded-xl border border-line px-3.5 py-2.5 flex items-center justify-between gap-2">
+                        <span class="text-xs sm:text-sm font-bold text-ink truncate">${label}</span>
+                        <button type="button" onclick="handleDeleteCategory('${cat.id}')" class="px-2.5 py-1 rounded-lg bg-card hover:bg-red-500/10 text-muted hover:text-red-400 border border-line text-xs font-bold transition shrink-0">
+                            ${t.deleteCatBtn}
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function handleDeleteCategory(catId) {
+            if (!confirm(UI_TEXT[state.lang].confirmDeleteCategory)) return;
+            await deleteDoc(doc(db, CATEGORIES_COLLECTION, catId));
+            showToast(UI_TEXT[state.lang].categoryDeleted);
+        }
+        window.handleDeleteCategory = handleDeleteCategory;
+
+        let toastTimer;
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMessage').textContent = msg;
+            toast.classList.remove('opacity-0', '-translate-y-3');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.add('opacity-0', '-translate-y-3');
+            }, 2400);
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            applyTheme();
+            applyLanguage();
+        });
+    </script>
+</body>
+</html>
